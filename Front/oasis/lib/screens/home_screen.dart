@@ -2,6 +2,53 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:oasis/services/location.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+
+Future<List<Post>> getData({double latitude, double longitude}) async {
+  final response =
+      await http.get("localhost:8080/api/oasis/trashcans?lon=$longitude&lat=$latitude");
+  if (response.statusCode == 200) {
+    List data = jsonDecode(response.body);
+    var postList = data.map((element) => Post.fromJson(element)).toList();
+    return postList;
+  } else {
+    print(response.statusCode);
+  }
+}
+
+class Post {
+  final String address;
+  final String location;
+  final String trashType;
+  final int distance;
+  final int id;
+  final double latitude;
+  final double longitude;
+
+  Post({
+    this.address,
+    this.location,
+    this.trashType,
+    this.distance,
+    this.id,
+    this.latitude,
+    this.longitude,
+  });
+
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      address: json['address'],
+      location: json['location'],
+      trashType: json['trashType'],
+      distance: json['distance'],
+      id: json['id'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+    );
+  }
+}
 
 class HomeScreen extends StatefulWidget {
   static String id = 'home_screen';
@@ -11,6 +58,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Future<List<Post>> postList;
   double latitude;
   double longitude;
   GoogleMapController _controller;
@@ -22,6 +70,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       latitude = position.latitude;
       longitude = position.longitude;
+      postList = getData(latitude: latitude,longitude: longitude);
+      print(postList);
       DestinationMarkers.add(
         Marker(
           markerId: MarkerId('TrashCan1'),
@@ -34,7 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
       );
       _child = mapWidget();
     });
-    print(position);
   }
 
   Widget mapWidget() {
@@ -51,8 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  List<Marker> DestinationMarkers = [
-  ];
+  List<Marker> DestinationMarkers = [];
 
   @override
   void initState() {
