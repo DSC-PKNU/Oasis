@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Hashing implements Encrypt{
+public class EncryptImpl implements Encrypt{
     private final String secretKey = "iAmSecretToken";
-    private final Logger logger = LoggerFactory.getLogger(Hashing.class);
+    private final Logger logger = LoggerFactory.getLogger(EncryptImpl.class);
 
     @Override
     public String hashPassword(String password){

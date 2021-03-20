@@ -1,7 +1,7 @@
 package com.dsc.oasis.users.config;
 
 import com.dsc.oasis.users.utils.Encrypt;
-import com.dsc.oasis.users.utils.Hashing;
+import com.dsc.oasis.users.utils.EncryptImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
 public class WebConfig {
     @Bean
     public Encrypt encryptConfigure(){
-        return new Hashing();
+        return new EncryptImpl();
     }
 }
