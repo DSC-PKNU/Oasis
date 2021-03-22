@@ -7,8 +7,8 @@ import 'dart:convert';
 import 'dart:async';
 
 Future<List<Post>> getData({double latitude, double longitude}) async {
-  final response =
-      await http.get("localhost:8080/api/oasis/trashcans?lon=$longitude&lat=$latitude");
+  final response = await http
+      .get("http://172.30.1.35:8080/api/oasis/trashcans?lon=127.06&lat=37.54");
   if (response.statusCode == 200) {
     List data = jsonDecode(response.body);
     var postList = data.map((element) => Post.fromJson(element)).toList();
@@ -41,7 +41,7 @@ class Post {
     return Post(
       address: json['address'],
       location: json['location'],
-      trashType: json['trashType'],
+      trashType: json['trash_type'],
       distance: json['distance'],
       id: json['id'],
       latitude: json['latitude'],
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       latitude = position.latitude;
       longitude = position.longitude;
-      postList = getData(latitude: latitude,longitude: longitude);
+      postList = getData(latitude: latitude, longitude: longitude);
       print(postList);
       DestinationMarkers.add(
         Marker(
