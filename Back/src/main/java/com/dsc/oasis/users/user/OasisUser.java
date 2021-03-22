@@ -12,16 +12,20 @@ public class OasisUser {
     private String email;
     private String password;
     private String token;
+    private Double lat;
+    private Double lon;
 
     public OasisUser() {
 
     }
 
-    public OasisUser(Long id, String email, String password, String token) {
+    public OasisUser(Long id, String email, String password, String token, Double lat, Double lon) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.token = token;
+        this.lat = lat;
+        this.lon = lon;
     }
 
     public Long getId() {
@@ -54,5 +58,21 @@ public class OasisUser {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLon() {
+        return lon;
+    }
+
+    public void setLon(Double lon) {
+        this.lon = lon;
     }
 }

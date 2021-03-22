@@ -33,4 +33,9 @@ public class UserController {
     public String logout(@RequestBody OasisUser user) throws Exception {
         return userService.logout(user);
     }
+
+    @PostMapping("/insert-trashcan")
+    public String insertTrashcan(@RequestBody OasisUser user) throws Exception{
+        return userService.insertTrashcan(user);
+    }
 }

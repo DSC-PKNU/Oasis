@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final Encrypt encrypt;
@@ -16,7 +17,6 @@ public class UserService {
         this.encrypt = encrypt;
     }
 
-    @Transactional
     public String register(OasisUser user) {
         String email = user.getEmail();
         String password = encrypt.hashPassword(user.getPassword());
@@ -37,34 +37,52 @@ public class UserService {
         return "success";
     }
 
-    @Transactional
     public String login(OasisUser user) throws Exception {
-        OasisUser tmpUser = userRepository.findUserByEmail(user.getEmail())
+        OasisUser reqUser = userRepository.findUserByEmail(user.getEmail())
                 .orElseThrow(()->new IllegalStateException(
                         "user id" + user.getId()+"는 없습니다."
                 ));
 
-        boolean checkPassword = encrypt.comparePassword(user.getPassword(), tmpUser.getPassword());
+        boolean checkPassword = encrypt.comparePassword(user.getPassword(), reqUser.getPassword());
         if(!checkPassword){
             return "failed";
         }
 
         String token = encrypt.makeJwt(user.getId());
-        tmpUser.setToken(token);
-        userRepository.save(tmpUser);
+        reqUser.setToken(token);
+        userRepository.save(reqUser);
 
         return "success";
     }
 
-    @Transactional
     public String logout(OasisUser user) throws Exception{
-        OasisUser tmpUser = userRepository.findUserByEmail(user.getEmail())
+        OasisUser reqUser = userRepository.findUserByEmail(user.getEmail())
                 .orElseThrow(()->new IllegalStateException(
                         "user id" + user.getId()+"는 없습니다."
                 ));
 
-        tmpUser.setToken("");
-        userRepository.save(tmpUser);
+        reqUser.setToken("");
+        userRepository.save(reqUser);
+
+        return "success";
+    }
+
+    public String insertTrashcan(OasisUser user) throws Exception{
+        OasisUser reqUser = userRepository.findUserByEmail(user.getEmail())
+                .orElseThrow(()->new IllegalStateException(
+                        "user id" + user.getId()+"는 없습니다."
+                ));
+
+//        System.out.println(latitude);
+//        System.out.println(reqUser.getToken().equals(""));
+
+        if(reqUser.getToken().equals("")){
+            return "로그인이 안된 사용자입니다.";
+        }
+
+        reqUser.setLat(user.getLat());
+        reqUser.setLon(user.getLon());
+        userRepository.save(reqUser);
 
         return "success";
     }
